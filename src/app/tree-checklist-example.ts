@@ -3,7 +3,7 @@ import {FlatTreeControl} from '@angular/cdk/tree';
 import {Component, Injectable} from '@angular/core';
 import {MatTreeFlatDataSource, MatTreeFlattener} from '@angular/material/tree';
 import {BehaviorSubject} from 'rxjs';
-
+import { HttpClient } from '@angular/common/http';
 /**
  * Node for to-do item
  */
@@ -51,14 +51,31 @@ export class ChecklistDatabase {
 
   get data(): TodoItemNode[] { return this.dataChange.value; }
 
-  constructor() {
+  constructor(private http: HttpClient) {
     this.initialize();
   }
+  private async request(method: string, url: string, data?: any) {
+    
+    console.log('request ' + JSON.stringify(data));
+    const result = this.http.request(method, url, {
+      body: data,
+      responseType: 'json',
+      observe: 'body',
+      headers: {'Access-Control-Allow-Origin': '*'}
+    });
+    return new Promise<any>((resolve, reject) => {
+      result.subscribe(resolve as any, reject as any);
+    });
+  }
+  getProducts() {
+    return this.request('get', `http://www.mocky.io/v2/5e92ebc53000007600156799`);
+  }
 
-  initialize() {
+  async initialize() {
     // Build the tree nodes from Json object. The result is a list of `TodoItemNode` with nested
     //     file node as children.
     const data = this.buildFileTree(TREE_DATA, 0);
+    let data2 = await this.getProducts();
 
     // Notify the change.
     this.dataChange.next(data);
