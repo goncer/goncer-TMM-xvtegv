@@ -60,23 +60,23 @@ export class ChecklistDatabase {
     const result = this.http.request(method, url, {
       body: data,
       responseType: 'json',
-      observe: 'body',
-      headers: {'Access-Control-Allow-Origin': '*'}
+      observe: 'body'
     });
     return new Promise<any>((resolve, reject) => {
       result.subscribe(resolve as any, reject as any);
     });
   }
   getProducts() {
-    return this.request('get', `http://www.mocky.io/v2/5e92ebc53000007600156799`);
+    return this.request('get', `https://7e837ea3-8cc2-4ece-88d0-fad0b686b521.mock.pstmn.io/gettree2`);
   }
 
   async initialize() {
     // Build the tree nodes from Json object. The result is a list of `TodoItemNode` with nested
     //     file node as children.
-    const data = this.buildFileTree(TREE_DATA, 0);
+    //const data = this.buildFileTree(TREE_DATA, 0);
     let data2 = await this.getProducts();
-
+    console.log(data2);
+    const data = this.buildFileTree(data2, 0);
     // Notify the change.
     this.dataChange.next(data);
   }
